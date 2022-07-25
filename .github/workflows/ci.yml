@@ -15,9 +15,17 @@ on:
     types:
       - 'published'
 
+env:
+  # You can use repository name or change the name
+  # For example: 
+  # change REPO_NAME: ${{ github.event.repository.name }} for REPO_NAME: "abc" 
+  # REPO_NAME: ${{ github.event.repository.name }}
+  # TAG: ${{ github.event.release.tag_name }}
+  # BASE_BRANCH: ${GITHUB_REF#refs/*/}
+
 jobs:
   build:
-    uses: cesarsturion/reusable-workflow/.github/workflows/createpublishdockerimage.yml@main
+    uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
     with:
       image_name: node-helloworld-github-actions
       tag: $GITHUB_RUN_NUMBER
@@ -25,14 +33,20 @@ jobs:
       registry_username: ${{ secrets.DOCKER_USER }}
       registry_password: ${{ secrets.DOCKER_PASSWORD }}
 
-  release: 
-    needs: build
-    runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v2
+  build-ecr:
+    if: github.event_name == 'release' && github.event.action == 'published'
+    uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
+      image_name: node-helloworld-github-actions
+      tag: 'v0.0.1'
+    secrets: 
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Run a one-line script
-        run: echo Hello, world!
+  slack:
+    if: github.event_name == 'release' && github.event.action == 'published'  
+    uses: gudiaolabs/slack-notify/.github/workflows/slack-notify.yml@main
+    secrets: 
+      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 
 
