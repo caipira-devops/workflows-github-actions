@@ -19,7 +19,7 @@ env:
   # You can use repository name or change the name
   # For example: 
   # change REPO_NAME: ${{ github.event.repository.name }} for REPO_NAME: "abc" 
-  # REPO_NAME: ${{ github.event.repository.name }}
+  REPO_NAME: ${{ github.event.repository.name }}
   # TAG: ${{ github.event.release.tag_name }}
   # BASE_BRANCH: ${GITHUB_REF#refs/*/}
 
@@ -33,20 +33,20 @@ jobs:
       registry_username: ${{ secrets.DOCKER_USER }}
       registry_password: ${{ secrets.DOCKER_PASSWORD }}
 
-  build-ecr:
-    if: github.event_name == 'release' && github.event.action == 'published'
-    uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
-      image_name: node-helloworld-github-actions
-      tag: 'v0.0.1'
-    secrets: 
-      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  # build-ecr:
+  #   if: github.event_name == 'release' && github.event.action == 'published'
+  #   uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
+  #     image_name: ${{ env.REPO_NAME }}
+  #     tag: 'v0.0.1'
+  #   secrets: 
+  #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  slack:
-    if: github.event_name == 'release' && github.event.action == 'published'  
-    uses: gudiaolabs/slack-notify/.github/workflows/slack-notify.yml@main
-    secrets: 
-      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+  # slack:
+  #   if: github.event_name == 'release' && github.event.action == 'published'  
+  #   uses: gudiaolabs/slack-notify/.github/workflows/slack-notify.yml@main
+  #   secrets: 
+  #     slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 
 
