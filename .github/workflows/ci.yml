@@ -33,7 +33,7 @@ jobs:
     # if: github.event_name == 'release' && github.event.action == 'published'
     uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
     with:
-      ecr_repository: $REPO_NAME
+      ecr_repository: ${{ github.event.repository.name }}
       image_tag: 'v0.0.1'
     secrets: 
       aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
