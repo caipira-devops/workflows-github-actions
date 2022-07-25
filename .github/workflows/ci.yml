@@ -28,7 +28,6 @@ jobs:
     uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
     with:
       image_name: node-helloworld-github-actions
-      tag: $GITHUB_RUN_NUMBER
     secrets:
       registry_username: ${{ secrets.DOCKER_USER }}
       registry_password: ${{ secrets.DOCKER_PASSWORD }}
