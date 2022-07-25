@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feature/*'
+      - '!master'
+      - '!main'
+  pull_request:
+    branches: 
+      - 'master'
+      - 'main'
+  release:
+    types:
+      - 'published'
+
+jobs:
+  slack-integration:
+    uses: cesarsturion/slack-notifications/.github/workflows/slack-notify.yml@main
+    # with:
+    #   ecr_repository: "tests-devops"
+    secrets: ### Por enquanto fica como parametro, mas a ideia eh que fique no actions         
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
