@@ -24,26 +24,26 @@ env:
   # BASE_BRANCH: ${GITHUB_REF#refs/*/}
 
 jobs:
-  build:
-    uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
-    with:
-      image_name: node-helloworld-github-actions
+  # build:
+  #   uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
+  #   with:
+  #     image_name: node-helloworld-github-actions
 
-  build-ecr:
-    # if: github.event_name == 'release' && github.event.action == 'published'
-    uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
-    with:
-      ecr_repository: ${{ github.event.repository.name }}
-      image_tag: 'v0.0.1'
-    secrets: 
-      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-  # slack:
-  #   if: github.event_name == 'release' && github.event.action == 'published'  
-  #   uses: gudiaolabs/slack-notify/.github/workflows/slack-notify.yml@main
+  # build-ecr:
+  #   if: github.event_name == 'release' && github.event.action == 'published'
+  #   uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
+  #   with:
+  #     ecr_repository: ${{ github.event.repository.name }}
+  #     image_tag: 'v0.0.1'
   #   secrets: 
-  #     slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  slack:
+    # if: github.event_name == 'release' && github.event.action == 'published'  
+    uses: gudiaolabs/slack-notify/.github/workflows/slack-notify.yml@main
+    secrets: 
+      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 
 
