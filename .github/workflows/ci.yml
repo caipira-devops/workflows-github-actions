@@ -14,25 +14,19 @@ on:
     types:
       - 'published'
 
-env:
-  # You can use repository name or change the name
-  # For example: 
-  # change REPO_NAME: ${{ github.event.repository.name }} for REPO_NAME: "abc" 
-  REPOSITORY_NAME: ${{ github.event.repository.name }}
-  # TAG: ${{ github.event.release.tag_name }}
-  # BASE_BRANCH: ${GITHUB_REF#refs/*/}
-
 jobs:
   EnvSetup:
     name: Setup Dynamic Environment Variables
     runs-on: ubuntu-latest
     outputs:
       repository-name: ${{ steps.set-output-defaults.outputs.repository-name }}
+      tag: ${{ steps.set-output-defaults.outputs.tag }}
     steps:
       - name: set outputs with default values
         id: set-output-defaults
         run: |    
           echo "::set-output name=repository-name::${{ github.event.repository.name }}"
+          echo "::set-output name=tag::${{ github.event.release.tag_name }}"
 
   build:
     needs: [EnvSetup]
@@ -40,21 +34,23 @@ jobs:
     with:
       image_name: ${{ needs.EnvSetup.outputs.repository-name }}
 
-  # build-ecr:
-  #   if: github.event_name == 'release' && github.event.action == 'published'
-  #   uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
-  #   with:
-  #     ecr_repository: $REPO_NAME
-  #     image_tag: 'v0.0.1'
-  #   secrets: 
-  #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  build-ecr:
+    needs: [EnvSetup]
+    if: github.event_name == 'release' && github.event.action == 'published'
+    uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
+    with:
+      ecr_repository: ${{ needs.EnvSetup.outputs.repository-name }}
+      image_tag: ${{ needs.EnvSetup.outputs.tag }}
+    secrets: 
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  # slack:
-  #   if: github.event_name == 'release' && github.event.action == 'published'  
-  #   uses: gudiaolabs/slack-notify/.github/workflows/slack-notify.yml@main
-  #   secrets: 
-  #     slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+  slack:
+    needs: [build-ecr]
+    if: github.event_name == 'release' && github.event.action == 'published'  
+    uses: gudiaolabs/slack-notify/.github/workflows/slack-notify.yml@main
+    secrets: 
+      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 
 
