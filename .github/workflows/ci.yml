@@ -14,34 +14,12 @@ on:
     types:
       - 'published'
 
-env:
-  # You can use repository name or change the name
-  # For example: 
-  # change REPO_NAME: ${{ github.event.repository.name }} for REPO_NAME: "abc" 
-  REPOSITORY_NAME: ${{ github.event.repository.name }}
-  # TAG: ${{ github.event.release.tag_name }}
-  # BASE_BRANCH: ${GITHUB_REF#refs/*/}
-
 jobs:
-  test: 
-    runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v3
-
-      - name: Run a one-line script
-        run: echo "Hello, world! Hi $REPOSITORY_NAME"
-
-      - name: Set env
-        run: echo "REPO_NAME=$(echo $REPOSITORY_NAME)" >> $GITHUB_ENV
-
-      - name: Test
-        run: echo $REPO_NAME
 
   build:
-    needs: [test]
     uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
     with:
-      image_name: $REPO_NAME
+      image_name: ${{ github.event.repository.name }}
 
   # build-ecr:
   #   if: github.event_name == 'release' && github.event.action == 'published'
