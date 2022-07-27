@@ -26,13 +26,13 @@ jobs:
   build:
     uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
     with:
-      image_name: node-helloworld-github-actions
+      image_name: $REPO_NAME
 
   build-ecr:
     if: github.event_name == 'release' && github.event.action == 'published'
     uses: gudiaolabs/docker-build-push-ecr/.github/workflows/dockerbuildpushecr.yml@main
     with:
-      ecr_repository: ${{ github.event.repository.name }}
+      ecr_repository: $REPO_NAME
       image_tag: 'v0.0.1'
     secrets: 
       aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
