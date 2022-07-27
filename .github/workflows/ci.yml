@@ -27,19 +27,18 @@ jobs:
     name: Setup Dynamic Environment Variables
     runs-on: ubuntu-latest
     outputs:
-      build-and-verify: ${{ steps.set-output-defaults.outputs.build-and-verify }}
+      repository-name: ${{ steps.set-output-defaults.outputs.repository-name }}
     steps:
       - name: set outputs with default values
         id: set-output-defaults
         run: |    
-          # If workflow_dispatch, use inputs (left), if other trigger, use default env (right)
-          echo "::set-output name=build-and-verify::${{ github.event.repository.name }}"
+          echo "::set-output name=repository-name::${{ github.event.repository.name }}"
 
   build:
     needs: [EnvSetup]
     uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
     with:
-      image_name: ${{ needs.EnvSetup.outputs.build-and-verify }}
+      image_name: ${{ needs.EnvSetup.outputs.repository-name }}
 
   # build-ecr:
   #   if: github.event_name == 'release' && github.event.action == 'published'
