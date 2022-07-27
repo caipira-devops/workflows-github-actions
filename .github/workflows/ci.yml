@@ -41,7 +41,7 @@ jobs:
     needs: [test]
     uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
     with:
-      image_name: ${{ env.REPO_NAME }}
+      image_name: $REPO_NAME
 
   # build-ecr:
   #   if: github.event_name == 'release' && github.event.action == 'published'
