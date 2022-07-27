@@ -30,6 +30,7 @@ jobs:
 
   build:
     needs: [EnvSetup]
+    if: github.ref == 'refs/heads/feature/*'
     uses: gudiaolabs/docker-build/.github/workflows/dockerbuild.yml@main
     with:
       image_name: ${{ needs.EnvSetup.outputs.repository-name }}
